@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerCraft</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0d0d0d;--paper:#f5f2ec;--cream:#fffdf8;--accent:#c84b2f;--accent2:#2f6dc8;--muted:#8a8478;--border:#e0dbd0;--card-bg:#ffffff;--font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--paper);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px}
+.nav-logo{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:7px 16px;font-size:13px;font-weight:500;border:1px solid transparent;border-radius:6px;cursor:pointer;transition:all .2s;font-family:var(--font-body);background:none;color:var(--muted);letter-spacing:.01em}
+.nav-link:hover{color:var(--ink);background:var(--cream);border-color:var(--border)}
+.nav-link.active{background:var(--ink);color:var(--paper)}
+.page{display:none;padding-top:60px;min-height:100vh}
+.page.active{display:block}
+.landing-hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.hero-left{padding:5rem 3rem 4rem 2.5rem;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border)}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem}
+.hero-tag::before{content:'';width:20px;height:1px;background:var(--accent)}
+.hero-title{font-family:var(--font-display);font-size:clamp(3rem,5vw,4.5rem);font-weight:800;line-height:1.0;letter-spacing:-0.04em;margin-bottom:1.5rem}
+.hero-title em{font-style:normal;color:var(--accent)}
+.hero-desc{font-size:16px;color:var(--muted);line-height:1.7;max-width:400px;margin-bottom:2.5rem}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{padding:13px 28px;background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all .2s;letter-spacing:.01em}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent)}
+.btn-outline{padding:13px 28px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all .2s}
+.btn-outline:hover{border-color:var(--ink)}
+.hero-right{background:var(--cream);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4rem 2.5rem;gap:1rem}
+.feature-card{width:100%;max-width:380px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.feature-card.li::before{background:var(--accent2)}
+.feature-card.resume::before{background:var(--accent)}
+.feature-card:hover{transform:translateY(-2px);border-color:var(--ink)}
+.fc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.fc-label.li{color:var(--accent2)}
+.fc-label.resume{color:var(--accent)}
+.fc-title{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:6px}
+.fc-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.fc-arrow{position:absolute;top:1.5rem;right:1.5rem;font-size:18px;color:var(--muted)}
+.price-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:1.5rem}
+.price-pill{background:var(--ink);color:var(--paper);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.page-header{border-bottom:1px solid var(--border);padding:3rem 2.5rem 2rem;background:var(--cream)}
+.page-header-inner{max-width:900px;margin:0 auto}
+.pg-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pg-tag.red{color:var(--accent)}
+.pg-tag::before{content:'';width:14px;height:1px;background:currentColor}
+.pg-title{font-family:var(--font-display);font-size:2.2rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px}
+.pg-sub{font-size:15px;color:var(--muted)}
+.page-body{max-width:900px;margin:0 auto;padding:2.5rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.form-group.full{grid-column:1 / -1}
+label{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+input[type=text],textarea,select{font-family:var(--font-body);background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--ink);transition:border-color .2s;width:100%;outline:none}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--ink)}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item{display:flex;align-items:center;gap:9px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;color:var(--ink);font-weight:400;transition:all .15s}
+.check-item input{accent-color:var(--accent2);width:15px;height:15px}
+.check-item:has(input:checked){border-color:var(--accent2);background:#f0f5ff}
+.generate-btn{width:100%;padding:15px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-display);letter-spacing:.01em;transition:all .2s;margin-top:8px}
+.generate-btn:hover{background:var(--accent)}
+.generate-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;background:var(--ink)}
+.output-box{display:none;margin-top:2rem;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.output-box.visible{display:block}
+.output-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--cream)}
+.output-title{font-family:var(--font-display);font-size:14px;font-weight:700}
+.copy-btn{padding:6px 14px;font-size:12px;font-weight:600;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--muted);font-family:var(--font-body);transition:all .15s}
+.copy-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.output-content{padding:1.5rem;font-size:14px;line-height:1.8;color:var(--ink);white-space:pre-wrap;min-height:80px}
+.output-tabs{display:flex;border-bottom:1px solid var(--border)}
+.out-tab{padding:10px 18px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font-body)}
+.out-tab.active{color:var(--accent2);border-bottom-color:var(--accent2)}
+.out-tab.red.active{color:var(--accent);border-bottom-color:var(--accent)}
+.loading-bar{height:3px;background:var(--border);overflow:hidden;display:none}
+.loading-bar.active{display:block}
+.loading-bar-fill{height:100%;width:0%;background:var(--accent2);animation:loadprogress 3s ease-in-out forwards}
+.loading-bar-fill.red{background:var(--accent)}
+@keyframes loadprogress{0%{width:0%}80%{width:85%}100%{width:95%}}
+.section-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.section-card-title{font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.divider-line{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+.steps-bar{display:flex;margin-bottom:2rem;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.step-item{flex:1;padding:12px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);border-right:1px solid var(--border);cursor:pointer;transition:all .15s;background:var(--card-bg)}
+.step-item:last-child{border-right:none}
+.step-item.active{background:var(--ink);color:var(--paper)}
+.step-item.done{background:var(--cream);color:var(--accent)}
+.step-panel{display:none}
+.step-panel.active{display:block}
+.tag-input-wrap{display:flex;gap:8px;margin-bottom:8px}
+.tag-input-wrap input{flex:1}
+.add-tag-btn{padding:10px 16px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--font-body);font-weight:500}
+.tags-container{display:flex;flex-wrap:wrap;gap:6px;min-height:32px}
+.tag-pill{display:flex;align-items:center;gap:5px;padding:4px 10px 4px 12px;background:var(--cream);border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--ink)}
+.tag-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0;line-height:1}
+.nav-btns{display:flex;justify-content:space-between;margin-top:1.5rem}
+.btn-sec{padding:11px 24px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all .2s}
+.btn-sec:hover{border-color:var(--ink)}
+.resume-preview{background:white;border:1px solid var(--border);border-radius:12px;padding:2.5rem;max-width:700px;margin:0 auto;font-family:var(--font-body);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.rv-name{font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:-0.03em}
+.rv-role{font-size:14px;color:var(--muted);margin-top:3px}
+.rv-contact{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:12px;color:var(--muted)}
+.rv-section{margin-top:1.5rem}
+.rv-section-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border-bottom:1.5px solid var(--ink);padding-bottom:5px;margin-bottom:10px}
+.rv-body{font-size:13px;line-height:1.7;color:#1a1a1a}
+.rv-item-header{display:flex;justify-content:space-between;align-items:baseline}
+.rv-item-title{font-size:14px;font-weight:600}
+.rv-item-meta{font-size:12px;color:var(--muted)}
+.rv-bullet{font-size:13px;padding-left:14px;position:relative;margin-bottom:3px;line-height:1.5}
+.rv-bullet::before{content:'•';position:absolute;left:0;color:var(--muted)}
+.rv-skill-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.rv-skill{font-size:12px;padding:3px 9px;background:#f5f5f5;border-radius:4px;color:#333}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:12px 24px;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.error{background:#c0392b}
+.toast.success{background:#27ae60}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:all .2s}
+.modal-overlay.active{visibility:visible;opacity:1}
+.modal-box{background:white;width:90%;max-width:400px;border-radius:12px;padding:2rem;position:relative;transform:translateY(20px);transition:all .2s}
+.modal-overlay.active .modal-box{transform:translateY(0)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--muted)}
+.payment-btn{width:100%;padding:14px;background:var(--ink);color:var(--paper);border:none;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.payment-btn:hover{background:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-user{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--border);border-radius:20px;background:var(--cream);cursor:default}
+.nav-user img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.nav-user-name{font-size:12px;font-weight:600;color:var(--ink);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sign-in-btn{padding:7px 16px;font-size:13px;font-weight:600;border:1px solid var(--accent);border-radius:6px;cursor:pointer;background:none;color:var(--accent);font-family:var(--font-body);transition:all .2s}
+.sign-in-btn:hover{background:var(--accent);color:white}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;background:white;border:1px solid var(--border);border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all .15s;color:var(--ink)}
+.google-btn:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.google-btn svg{flex-shrink:0}
+@media(max-width:700px){.landing-hero{grid-template-columns:1fr}.hero-left{padding:3rem 1.5rem;border-right:none;border-bottom:1px solid var(--border);text-align:center}.hero-desc{margin:0 auto 2.5rem auto}.hero-ctas{justify-content:center}.price-note{justify-content:center}.hero-right{padding:2.5rem 1.5rem}.form-grid{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr}nav{padding:0 1rem}.nav-logo{font-size:16px}.nav-links{gap:2px;overflow-x:auto}.nav-link{padding:6px 8px;font-size:11px}.page-header{padding:2rem 1.5rem 1.5rem}.page-body{padding:1.5rem}.output-tabs{overflow-x:auto}.steps-bar{overflow-x:auto}.step-item{display:inline-block;padding:10px 16px}.resume-preview{padding:1.5rem}}
+@media print{
+  body{background:white!important;color:black!important}
+  nav,.page-header,.steps-bar,.nav-btns,.modal-overlay,.toast,.loading-bar,.btn-primary,.btn-sec,.page#page-home,.page#page-linkedin{display:none!important}
+  .page#page-resume{display:block!important;padding-top:0!important;min-height:auto!important}
+  .page-body{padding:0!important;max-width:none!important}
+  .step-panel{display:none!important}
+  .step-panel#step-4{display:block!important}
+  .step-panel#step-4>div:first-child{display:none!important}
+  .resume-preview{box-shadow:none!important;border:none!important;border-radius:0!important;padding:1.5rem 0!important;max-width:none!important}
+  .rv-bullet::before{color:black!important}
+  .rv-section-title{border-bottom-color:black!important}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <div class="nav-logo">Career<span>Craft</span></div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home',this)">Home</button>
+    <button class="nav-link" onclick="checkAccess('linkedin',this)">LinkedIn optimizer</button>
+    <button class="nav-link" onclick="checkAccess('resume',this)">Resume builder</button>
+  </div>
+  <div class="nav-right">
+    <div id="nav-user-info" style="display:none"></div>
+    <button class="sign-in-btn" id="nav-signin-btn" onclick="openSignIn()">Sign in</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="landing-hero">
+    <div class="hero-left">
+      <div class="hero-tag">AI-powered career tools</div>
+      <h1 class="hero-title">Land your<br><em>dream</em><br>job faster.</h1>
+      <p class="hero-desc">Two powerful AI tools — a LinkedIn profile optimizer and an ATS-ready resume builder — built for final-year CS students and early-career professionals.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="checkAccess('linkedin',document.querySelectorAll('.nav-link')[1])">Optimize LinkedIn</button>
+        <button class="btn-outline" onclick="checkAccess('resume',document.querySelectorAll('.nav-link')[2])">Build resume</button>
+      </div>
+      <div class="price-note">
+        <span class="price-pill" id="price-pill">&#8377;99</span>
+        <span id="price-desc">one-time &middot; both tools included</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="feature-card li" onclick="checkAccess('linkedin',document.querySelectorAll('.nav-link')[1])">
+        <div class="fc-arrow">&rarr;</div>
+        <div class="fc-label li">Part 1</div>
+        <div class="fc-title">LinkedIn optimizer</div>
+        <div class="fc-desc">AI-generated headline, about section, and profile tips tailored to your target role.</div>
+      </div>
+      <div class="feature-card resume" onclick="checkAccess('resume',document.querySelectorAll('.nav-link')[2])">
+        <div class="fc-arrow">&rarr;</div>
+        <div class="fc-label resume">Part 2</div>
+        <div class="fc-title">Resume builder</div>
+        <div class="fc-desc">Step-by-step ATS-friendly resume creation with AI-enhanced bullet points and live preview.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LINKEDIN -->
+<div id="page-linkedin" class="page">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="pg-tag">Part 1</div>
+      <h1 class="pg-title">LinkedIn optimizer</h1>
+      <p class="pg-sub">Fill in your details and get AI-crafted headline, about section, and profile tips instantly.</p>
+    </div>
+  </div>
+  <div class="page-body">
+    <div class="section-card">
+      <div class="section-card-title">Your profile info</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Full name</label><input type="text" id="li-name" placeholder="Salah K"/></div>
+        <div class="form-group"><label>Target role</label><input type="text" id="li-role" placeholder="Data Analyst, ML Engineer..."/></div>
+        <div class="form-group"><label>Current status</label><input type="text" id="li-status" placeholder="Final year CS student @ KRAN College"/></div>
+        <div class="form-group"><label>Location</label><input type="text" id="li-location" placeholder="Kerala, India"/></div>
+      </div>
+      <div class="form-group"><label>Key skills (comma separated)</label><input type="text" id="li-skills" placeholder="Python, SQL, Machine Learning, Django..."/></div>
+      <div class="form-group"><label>Internships / experience</label><textarea id="li-exp" placeholder="e.g. Data Science Intern at Unified Mentor..."></textarea></div>
+      <div class="form-group"><label>Key projects</label><textarea id="li-projects" placeholder="e.g. PHISHINSPECT — ML phishing URL detector..."></textarea></div>
+      <div class="form-group">
+        <label>What to generate</label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" id="li-headline" checked> LinkedIn headline</label>
+          <label class="check-item"><input type="checkbox" id="li-about" checked> About section</label>
+          <label class="check-item"><input type="checkbox" id="li-tips" checked> Profile optimization tips</label>
+          <label class="check-item"><input type="checkbox" id="li-keywords" checked> ATS keywords to add</label>
+        </div>
+      </div>
+    </div>
+    <button class="generate-btn" id="li-gen-btn" onclick="generateLinkedIn()">Generate LinkedIn content &rarr;</button>
+    <div class="loading-bar" id="li-loading"><div class="loading-bar-fill" id="li-fill"></div></div>
+    <div class="output-box" id="li-output">
+      <div class="output-tabs">
+        <button class="out-tab active" onclick="switchOutTab('headline',this)">Headline</button>
+        <button class="out-tab" onclick="switchOutTab('about',this)">About</button>
+        <button class="out-tab" onclick="switchOutTab('tips',this)">Tips</button>
+        <button class="out-tab" onclick="switchOutTab('keywords',this)">Keywords</button>
+      </div>
+      <div id="li-out-headline" class="li-out-panel">
+        <div class="output-header"><span class="output-title">LinkedIn headline</span><button class="copy-btn" onclick="copyOut('li-headline-content',this)">Copy</button></div>
+        <div class="output-content" id="li-headline-content"></div>
+      </div>
+      <div id="li-out-about" class="li-out-panel" style="display:none">
+        <div class="output-header"><span class="output-title">About section</span><button class="copy-btn" onclick="copyOut('li-about-content',this)">Copy</button></div>
+        <div class="output-content" id="li-about-content"></div>
+      </div>
+      <div id="li-out-tips" class="li-out-panel" style="display:none">
+        <div class="output-header"><span class="output-title">Profile tips</span><button class="copy-btn" onclick="copyOut('li-tips-content',this)">Copy</button></div>
+        <div class="output-content" id="li-tips-content"></div>
+      </div>
+      <div id="li-out-keywords" class="li-out-panel" style="display:none">
+        <div class="output-header"><span class="output-title">ATS keywords</span><button class="copy-btn" onclick="copyOut('li-keywords-content',this)">Copy</button></div>
+        <div class="output-content" id="li-keywords-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESUME -->
+<div id="page-resume" class="page">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="pg-tag red">Part 2</div>
+      <h1 class="pg-title">Resume builder</h1>
+      <p class="pg-sub">Build an ATS-optimized resume step-by-step. AI enhances your bullet points automatically.</p>
+    </div>
+  </div>
+  <div class="page-body">
+    <div class="steps-bar">
+      <div class="step-item active" onclick="goStep(0)">1. Basics</div>
+      <div class="step-item" onclick="goStep(1)">2. Experience</div>
+      <div class="step-item" onclick="goStep(2)">3. Projects</div>
+      <div class="step-item" onclick="goStep(3)">4. Skills</div>
+      <div class="step-item" onclick="goStep(4)">5. Preview</div>
+    </div>
+
+    <div class="step-panel active" id="step-0">
+      <div class="section-card">
+        <div class="section-card-title">Personal information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Full name</label><input type="text" id="r-name" placeholder="Salah K"/></div>
+          <div class="form-group"><label>Target role</label><input type="text" id="r-role" placeholder="Data Analyst"/></div>
+          <div class="form-group"><label>Email</label><input type="text" id="r-email" placeholder="salah@email.com"/></div>
+          <div class="form-group"><label>Phone</label><input type="text" id="r-phone" placeholder="+91 9876543210"/></div>
+          <div class="form-group"><label>Location</label><input type="text" id="r-location" placeholder="Kerala, India"/></div>
+          <div class="form-group"><label>LinkedIn URL</label><input type="text" id="r-linkedin" placeholder="linkedin.com/in/salahk"/></div>
+          <div class="form-group"><label>GitHub / Portfolio</label><input type="text" id="r-github" placeholder="github.com/salahk"/></div>
+        </div>
+        <hr class="divider-line">
+        <div class="section-card-title">Education</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Degree &amp; field</label><input type="text" id="r-degree" placeholder="BSc Computer Science"/></div>
+          <div class="form-group"><label>College / University</label><input type="text" id="r-college" placeholder="KRAN College, Valanchery"/></div>
+          <div class="form-group"><label>Year of graduation</label><input type="text" id="r-gradyear" placeholder="2026"/></div>
+          <div class="form-group"><label>CGPA (optional)</label><input type="text" id="r-cgpa" placeholder="7.8 / 10"/></div>
+        </div>
+        <div class="form-group"><label>Professional summary</label><textarea id="r-summary" placeholder="2-3 sentences or leave blank to auto-generate..."></textarea></div>
+      </div>
+      <div class="nav-btns"><span></span><button class="btn-primary" onclick="goStep(1)">Next: Experience &rarr;</button></div>
+    </div>
+
+    <div class="step-panel" id="step-1">
+      <div class="section-card">
+        <div class="section-card-title">Work experience &amp; internships</div>
+        <div id="exp-list"></div>
+        <button class="btn-sec" onclick="addExp()" style="margin-top:8px">+ Add position</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-sec" onclick="goStep(0)">&larr; Back</button>
+        <button class="btn-primary" onclick="goStep(2)">Next: Projects &rarr;</button>
+      </div>
+    </div>
+
+    <div class="step-panel" id="step-2">
+      <div class="section-card">
+        <div class="section-card-title">Projects</div>
+        <div id="proj-list"></div>
+        <button class="btn-sec" onclick="addProj()" style="margin-top:8px">+ Add project</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-sec" onclick="goStep(1)">&larr; Back</button>
+        <button class="btn-primary" onclick="goStep(3)">Next: Skills &rarr;</button>
+      </div>
+    </div>
+
+    <div class="step-panel" id="step-3">
+      <div class="section-card">
+        <div class="section-card-title">Skills</div>
+        <div class="form-group">
+          <label>Add skill</label>
+          <div class="tag-input-wrap">
+            <input type="text" id="skill-input" placeholder="e.g. Python, SQL, Power BI..." onkeydown="if(event.key==='Enter')addSkill()"/>
+            <button class="add-tag-btn" onclick="addSkill()">Add</button>
+          </div>
+          <div class="tags-container" id="skills-tags"></div>
+        </div>
+        <div class="form-group" style="margin-top:1rem"><label>Certifications (optional)</label><textarea id="r-certs" placeholder="Django Certificate, Google Data Analytics..." style="min-height:60px"></textarea></div>
+        <div class="form-group"><label>Languages</label><input type="text" id="r-langs" placeholder="English, Malayalam, Hindi"/></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-sec" onclick="goStep(2)">&larr; Back</button>
+        <button class="btn-primary" onclick="buildPreview()">Generate preview &rarr;</button>
+      </div>
+    </div>
+
+    <div class="step-panel" id="step-4">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700">Resume preview</div>
+          <div style="font-size:13px;color:var(--muted)">AI-optimized &amp; ATS-friendly</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sec" onclick="goStep(3)">&larr; Edit</button>
+          <button class="btn-primary" onclick="window.print()">Download / Print</button>
+        </div>
+      </div>
+      <div class="loading-bar" id="r-loading"><div class="loading-bar-fill red" id="r-fill"></div></div>
+      <div class="resume-preview" id="resume-preview-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePayment()">&times;</button>
+    <div style="text-align:center">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,#3395ff,#0070e0);border-radius:14px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:6px">Unlock Full Access</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:1.5rem">One-time payment of <strong style="color:var(--ink)">&#8377;99</strong> for lifetime access to both tools.</p>
+    </div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--muted)">LinkedIn Optimizer</span><span style="font-size:13px;font-weight:600;color:var(--accent2)">&#10003; Included</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--muted)">Resume Builder</span><span style="font-size:13px;font-weight:600;color:var(--accent)">&#10003; Included</span></div>
+    </div>
+    <button class="payment-btn" onclick="openRazorpay()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Pay &#8377;99 with Razorpay
+    </button>
+    <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">Secure &middot; UPI &middot; Cards &middot; Net Banking &middot; Wallets</p>
+  </div>
+</div>
+
+<!-- SIGN-IN MODAL -->
+<div class="modal-overlay" id="signin-modal">
+  <div class="modal-box" style="max-width:380px">
+    <button class="modal-close" onclick="closeSignIn()">&times;</button>
+    <div style="text-align:center">
+      <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h2 style="font-family:var(--font-display);font-size:22px;margin-bottom:6px">Welcome to CareerCraft</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:1.5rem">Sign in to access AI-powered career tools</p>
+    </div>
+    <button class="google-btn" id="custom-google-btn" onclick="triggerGoogleSignIn()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.9 33.5 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.2-2.7-.4-3.9z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.5 15.5 18.8 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.2 26.7 36 24 36c-5.4 0-9.9-3.5-11.3-8.5l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.2-2.7-.4-3.9z"/></svg>
+      Continue with Google
+    </button>
+    <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:1rem">We only use your name &amp; email for personalization</p>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  GOOGLE SIGN-IN CONFIGURATION
+//  Get your Client ID from https://console.cloud.google.com
+//  → APIs & Services → Credentials → OAuth 2.0 Client IDs
+//  Set Authorized JavaScript origins to your domain
+// ============================================================
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+const RAZORPAY_KEY = 'rzp_test_Sf0dShVit8YHSR';
+const AMOUNT_PAISE = 9900;
+const OPENROUTER_API_KEY = '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';
+
+// Models tried in order — if one fails, next is used automatically
+const AI_MODELS = [
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'deepseek/deepseek-chat:free',
+  'mistralai/mistral-7b-instruct:free',
+  'openrouter/auto'
+];
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.classList.remove('show'); }, 5000);
+}
+
+async function callAI(prompt) {
+  var lastError = 'Unknown error';
+  for (var i = 0; i < AI_MODELS.length; i++) {
+    var model = AI_MODELS[i];
+    try {
+      var res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+          'HTTP-Referer': window.location.href,
+          'X-Title': 'CareerCraft'
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      var data = await res.json();
+      if (data.error) {
+        lastError = data.error.message || JSON.stringify(data.error);
+        console.warn('Model ' + model + ' error:', lastError);
+        continue;
+      }
+      var text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+      if (!text) { lastError = 'Empty response from ' + model; continue; }
+      console.log('Success with model:', model);
+      return text;
+    } catch(e) {
+      lastError = e.message;
+      console.warn('Model ' + model + ' threw:', e.message);
+    }
+  }
+  throw new Error('All AI models failed. Last error: ' + lastError);
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+var isUnlocked = false;
+var pendingPage = null;
+var pendingNavEl = null;
+var currentUser = null;
+
+// Google Sign-In
+function openSignIn() {
+  document.getElementById('signin-modal').classList.add('active');
+}
+function closeSignIn() {
+  document.getElementById('signin-modal').classList.remove('active');
+}
+
+function triggerGoogleSignIn() {
+  if (typeof google === 'undefined' || !google.accounts) {
+    showToast('Google Sign-In failed to load. Check your internet.', 'error');
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleResponse,
+    auto_select: false
+  });
+  google.accounts.id.prompt();
+}
+
+function handleGoogleResponse(response) {
+  try {
+    var payload = JSON.parse(atob(response.credential.split('.')[1]));
+    currentUser = {
+      name: payload.name || 'User',
+      email: payload.email || '',
+      picture: payload.picture || ''
+    };
+    onSignedIn();
+  } catch(e) {
+    showToast('Sign-in failed. Please try again.', 'error');
+    console.error('Google sign-in error:', e);
+  }
+}
+
+function onSignedIn() {
+  closeSignIn();
+  // Update nav
+  document.getElementById('nav-signin-btn').style.display = 'none';
+  var userEl = document.getElementById('nav-user-info');
+  userEl.style.display = 'flex';
+  userEl.className = 'nav-user';
+  userEl.innerHTML = (currentUser.picture ? '<img src="' + escHtml(currentUser.picture) + '" alt="">' : '') +
+    '<span class="nav-user-name">' + escHtml(currentUser.name) + '</span>';
+  showToast('Welcome, ' + currentUser.name + '!', 'success');
+  // If there was a pending page, proceed to payment
+  if (pendingPage && pendingNavEl) {
+    document.getElementById('payment-modal').classList.add('active');
+  }
+}
+
+function checkAccess(pageId, navEl) {
+  if (isUnlocked) { showPage(pageId, navEl); return; }
+  pendingPage = pageId;
+  pendingNavEl = navEl;
+  if (!currentUser) {
+    openSignIn();
+  } else {
+    document.getElementById('payment-modal').classList.add('active');
+  }
+}
+function closePayment() { document.getElementById('payment-modal').classList.remove('active'); }
+function unlockAccess() {
+  isUnlocked = true; closePayment();
+  var pill = document.getElementById('price-pill');
+  if (pill) { pill.textContent = 'Purchased'; pill.style.background = '#28a745'; document.getElementById('price-desc').textContent = 'Lifetime access unlocked'; }
+  showToast('Payment successful! Access unlocked.', 'success');
+  if (pendingPage && pendingNavEl) showPage(pendingPage, pendingNavEl);
+}
+function openRazorpay() {
+  if (typeof Razorpay === 'undefined') { showToast('Payment gateway failed to load. Check your internet and reload.', 'error'); return; }
+  try {
+    var rzp = new Razorpay({
+      key: RAZORPAY_KEY, amount: AMOUNT_PAISE, currency: 'INR',
+      name: 'CareerCraft', description: 'LinkedIn Optimizer + Resume Builder',
+      handler: function(r) { console.log('Paid:', r.razorpay_payment_id); unlockAccess(); },
+      prefill: { name: currentUser ? currentUser.name : '', email: currentUser ? currentUser.email : '', contact:'' },
+      theme: { color: '#0d0d0d' },
+      modal: { ondismiss: function(){ showToast('Payment cancelled. Try again anytime.'); } }
+    });
+    rzp.on('payment.failed', function(r){ showToast('Payment failed: ' + (r.error.description || 'Please try again.'), 'error'); });
+    rzp.open();
+  } catch(e) { showToast('Could not open payment window. Please reload.', 'error'); }
+}
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-link').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(function(p,i){ p.classList.toggle('active', i===n); });
+  document.querySelectorAll('.step-item').forEach(function(s,i){ s.classList.remove('active','done'); if(i===n)s.classList.add('active'); if(i<n)s.classList.add('done'); });
+  window.scrollTo(0, 0);
+}
+
+function switchOutTab(tab, el) {
+  document.querySelectorAll('.li-out-panel').forEach(function(p){ p.style.display='none'; });
+  document.querySelectorAll('.out-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('li-out-' + tab).style.display = 'block';
+  el.classList.add('active');
+}
+
+function copyOut(id, btn) {
+  var text = document.getElementById(id).innerText;
+  if (!text || text === '(not generated)') { showToast('Nothing to copy yet.', 'error'); return; }
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1500);
+  }).catch(function(){ showToast('Copy failed. Select and copy manually.', 'error'); });
+}
+
+function startBar(fillId) {
+  var fill = document.getElementById(fillId);
+  fill.style.animation = 'none'; fill.offsetHeight; fill.style.animation = '';
+  fill.parentElement.classList.add('active');
+}
+function stopBar(fillId) { document.getElementById(fillId).parentElement.classList.remove('active'); }
+
+async function generateLinkedIn() {
+  var wantH = document.getElementById('li-headline').checked;
+  var wantA = document.getElementById('li-about').checked;
+  var wantT = document.getElementById('li-tips').checked;
+  var wantK = document.getElementById('li-keywords').checked;
+  if (!wantH && !wantA && !wantT && !wantK) { showToast('Select at least one section to generate.', 'error'); return; }
+
+  var btn = document.getElementById('li-gen-btn');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  startBar('li-fill');
+
+  var prompt = 'You are a professional LinkedIn profile optimizer. Generate content for:\n' +
+    'Name: ' + (document.getElementById('li-name').value||'the user') + '\n' +
+    'Target role: ' + (document.getElementById('li-role').value||'professional') + '\n' +
+    'Status: ' + document.getElementById('li-status').value + '\n' +
+    'Location: ' + document.getElementById('li-location').value + '\n' +
+    'Skills: ' + document.getElementById('li-skills').value + '\n' +
+    'Experience: ' + document.getElementById('li-exp').value + '\n' +
+    'Projects: ' + document.getElementById('li-projects').value + '\n\n' +
+    'Generate sections with EXACT headers:\n' +
+    (wantH ? '---HEADLINE---\n(1 punchy headline, max 220 chars)\n' : '') +
+    (wantA ? '---ABOUT---\n(200-250 word About section, first person)\n' : '') +
+    (wantT ? '---TIPS---\n(5 specific profile optimization tips)\n' : '') +
+    (wantK ? '---KEYWORDS---\n(15 ATS keywords, one per line)\n' : '') +
+    '\nBe specific and professional.';
+
+  try {
+    var text = await callAI(prompt);
+    function extract(label) {
+      var m = text.match(new RegExp('---' + label + '---([\\s\\S]*?)(?=---|$)', 'i'));
+      return m ? m[1].trim() : '(not generated)';
+    }
+    document.getElementById('li-headline-content').textContent = extract('HEADLINE');
+    document.getElementById('li-about-content').textContent    = extract('ABOUT');
+    document.getElementById('li-tips-content').textContent     = extract('TIPS');
+    document.getElementById('li-keywords-content').textContent = extract('KEYWORDS');
+    document.getElementById('li-output').classList.add('visible');
+    document.getElementById('li-output').scrollIntoView({ behavior:'smooth', block:'start' });
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+  stopBar('li-fill');
+  btn.disabled = false; btn.textContent = 'Generate LinkedIn content \u2192';
+}
+
+var expCount = 0;
+function addExp() {
+  var id = expCount++;
+  var div = document.createElement('div');
+  div.id = 'exp-' + id;
+  div.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:12px;background:var(--cream)';
+  div.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase">Position ' + (id+1) + '</span><button onclick="document.getElementById(\'exp-' + id + '\').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">&times;</button></div>'
+    + '<div class="form-grid"><div class="form-group"><label>Job title</label><input type="text" id="exp-title-' + id + '" placeholder="Data Science Intern"/></div><div class="form-group"><label>Company</label><input type="text" id="exp-company-' + id + '" placeholder="Unified Mentor Pvt Ltd"/></div><div class="form-group"><label>Duration</label><input type="text" id="exp-duration-' + id + '" placeholder="April 2025 - Present"/></div><div class="form-group"><label>Type</label><input type="text" id="exp-type-' + id + '" placeholder="Remote / On-site"/></div></div>'
+    + '<div class="form-group"><label>Key responsibilities</label><textarea id="exp-desc-' + id + '" placeholder="Describe what you did..."></textarea></div>';
+  document.getElementById('exp-list').appendChild(div);
+}
+
+var projCount = 0;
+function addProj() {
+  var id = projCount++;
+  var div = document.createElement('div');
+  div.id = 'proj-' + id;
+  div.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:12px;background:var(--cream)';
+  div.innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase">Project ' + (id+1) + '</span><button onclick="document.getElementById(\'proj-' + id + '\').remove()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">&times;</button></div>'
+    + '<div class="form-grid"><div class="form-group"><label>Project name</label><input type="text" id="proj-name-' + id + '" placeholder="PHISHINSPECT"/></div><div class="form-group"><label>Tech stack</label><input type="text" id="proj-tech-' + id + '" placeholder="Python, Django, Scikit-learn"/></div></div>'
+    + '<div class="form-group"><label>Description</label><textarea id="proj-desc-' + id + '" placeholder="What it does and what you built..." style="min-height:70px"></textarea></div>';
+  document.getElementById('proj-list').appendChild(div);
+}
+
+window.addEventListener('DOMContentLoaded', function(){ addExp(); addProj(); });
+
+var skillsList = [];
+function addSkill() {
+  var input = document.getElementById('skill-input');
+  var val = input.value.trim();
+  if (!val) return;
+  val.split(',').forEach(function(s){
+    var sk = s.trim();
+    if (sk && skillsList.indexOf(sk) === -1) {
+      skillsList.push(sk);
+      var pill = document.createElement('div');
+      pill.className = 'tag-pill';
+      pill.appendChild(document.createTextNode(sk));
+      var rm = document.createElement('button');
+      rm.className = 'tag-remove'; rm.textContent = '\u00d7';
+      (function(skill, el){ rm.onclick = function(){ removeSkill(skill, el); }; })(sk, pill);
+      pill.appendChild(rm);
+      document.getElementById('skills-tags').appendChild(pill);
+    }
+  });
+  input.value = '';
+}
+function removeSkill(sk, el) {
+  var i = skillsList.indexOf(sk);
+  if (i > -1) skillsList.splice(i, 1);
+  el.remove();
+}
+
+async function buildPreview() {
+  goStep(4);
+  var name     = document.getElementById('r-name').value.trim()     || 'Your Name';
+  var role     = document.getElementById('r-role').value.trim()     || 'Professional';
+  var email    = document.getElementById('r-email').value.trim();
+  var phone    = document.getElementById('r-phone').value.trim();
+  var loc      = document.getElementById('r-location').value.trim();
+  var linkedin = document.getElementById('r-linkedin').value.trim();
+  var github   = document.getElementById('r-github').value.trim();
+  var degree   = document.getElementById('r-degree').value.trim();
+  var college  = document.getElementById('r-college').value.trim();
+  var gradyear = document.getElementById('r-gradyear').value.trim();
+  var cgpa     = document.getElementById('r-cgpa').value.trim();
+  var summary  = document.getElementById('r-summary').value.trim();
+  var certs    = document.getElementById('r-certs').value.trim();
+  var langs    = document.getElementById('r-langs').value.trim();
+
+  var exps = [];
+  document.querySelectorAll('[id^="exp-title-"]').forEach(function(el){
+    var id = el.id.replace('exp-title-','');
+    if (document.getElementById('exp-' + id)) {
+      exps.push({ title: el.value, company: (document.getElementById('exp-company-'+id)||{}).value||'', duration: (document.getElementById('exp-duration-'+id)||{}).value||'', type: (document.getElementById('exp-type-'+id)||{}).value||'', desc: (document.getElementById('exp-desc-'+id)||{}).value||'' });
+    }
+  });
+  var projs = [];
+  document.querySelectorAll('[id^="proj-name-"]').forEach(function(el){
+    var id = el.id.replace('proj-name-','');
+    if (document.getElementById('proj-' + id)) {
+      projs.push({ name: el.value, tech: (document.getElementById('proj-tech-'+id)||{}).value||'', desc: (document.getElementById('proj-desc-'+id)||{}).value||'' });
+    }
+  });
+
+  startBar('r-fill');
+
+  var prompt = 'You are an expert ATS resume optimizer. Return ONLY raw JSON, no markdown, no extra text.\n'
+    + 'Target role: ' + role + '\nSkills: ' + skillsList.join(', ') + '\n'
+    + 'Experience: ' + JSON.stringify(exps) + '\nProjects: ' + JSON.stringify(projs) + '\nSummary hint: ' + summary + '\n\n'
+    + 'JSON structure (return exactly this shape):\n'
+    + '{"summary":"2-3 sentence professional summary","experience":[{"title":"","company":"","duration":"","type":"","bullets":["bullet1","bullet2","bullet3"]}],"projects":[{"name":"","tech":"","bullets":["bullet1","bullet2"]}]}\n\n'
+    + 'Rules: start bullets with action verbs, include metrics, keep under 15 words each, use ATS keywords for ' + role;
+
+  var aiData = null;
+  try {
+    var raw = await callAI(prompt);
+    var match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('No JSON found in response');
+    aiData = JSON.parse(match[0]);
+  } catch(e) {
+    showToast('AI enhancement skipped (' + e.message + '). Showing your original content.', 'error');
+    aiData = null;
+  }
+
+  stopBar('r-fill');
+
+  var finalSummary = (aiData && aiData.summary) || summary || ('Results-driven ' + role + ' with expertise in ' + skillsList.slice(0,3).join(', ') + '.');
+
+  var expHTML = '';
+  var expSrc = (aiData && aiData.experience && aiData.experience.length) ? aiData.experience : exps;
+  expSrc.forEach(function(e, i){
+    var src = exps[i] || e;
+    var bullets = e.bullets || [src.desc || ''];
+    expHTML += '<div style="margin-bottom:12px"><div class="rv-item-header"><span class="rv-item-title">' + escHtml(src.title||e.title) + ' &mdash; ' + escHtml(src.company||e.company) + '</span><span class="rv-item-meta">' + escHtml(src.duration||e.duration) + ((src.type||e.type) ? ' &middot; ' + escHtml(src.type||e.type) : '') + '</span></div>' + bullets.filter(Boolean).map(function(b){ return '<div class="rv-bullet">' + escHtml(b) + '</div>'; }).join('') + '</div>';
+  });
+
+  var projHTML = '';
+  var projSrc = (aiData && aiData.projects && aiData.projects.length) ? aiData.projects : projs;
+  projSrc.forEach(function(p, i){
+    var src = projs[i] || p;
+    var bullets = p.bullets || [src.desc || ''];
+    projHTML += '<div style="margin-bottom:12px"><div class="rv-item-header"><span class="rv-item-title">' + escHtml(src.name||p.name) + '</span><span class="rv-item-meta">' + escHtml(src.tech||p.tech) + '</span></div>' + bullets.filter(Boolean).map(function(b){ return '<div class="rv-bullet">' + escHtml(b) + '</div>'; }).join('') + '</div>';
+  });
+
+  document.getElementById('resume-preview-box').innerHTML =
+    '<div class="rv-name">' + escHtml(name) + '</div>'
+    + '<div class="rv-role">' + escHtml(role) + '</div>'
+    + '<div class="rv-contact">' + [email,phone,loc,linkedin,github].filter(Boolean).map(function(x){ return '<span>' + escHtml(x) + '</span>'; }).join('') + '</div>'
+    + '<div class="rv-section"><div class="rv-section-title">Professional summary</div><div class="rv-body">' + escHtml(finalSummary) + '</div></div>'
+    + (skillsList.length ? '<div class="rv-section"><div class="rv-section-title">Technical skills</div><div class="rv-skill-wrap">' + skillsList.map(function(s){ return '<span class="rv-skill">' + escHtml(s) + '</span>'; }).join('') + '</div></div>' : '')
+    + (expHTML ? '<div class="rv-section"><div class="rv-section-title">Experience</div>' + expHTML + '</div>' : '')
+    + (projHTML ? '<div class="rv-section"><div class="rv-section-title">Projects</div>' + projHTML + '</div>' : '')
+    + '<div class="rv-section"><div class="rv-section-title">Education</div><div class="rv-item-header"><span class="rv-item-title">' + escHtml(degree) + '</span><span class="rv-item-meta">' + escHtml(gradyear) + '</span></div><div class="rv-body" style="font-size:13px;color:#555">' + escHtml(college) + (cgpa ? ' &middot; CGPA: ' + escHtml(cgpa) : '') + '</div></div>'
+    + (certs ? '<div class="rv-section"><div class="rv-section-title">Certifications</div><div class="rv-body" style="font-size:13px">' + escHtml(certs) + '</div></div>' : '')
+    + (langs ? '<div class="rv-section"><div class="rv-section-title">Languages</div><div class="rv-body" style="font-size:13px">' + escHtml(langs) + '</div></div>' : '');
+}
+</script>
+</body>
+</html>
